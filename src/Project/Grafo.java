@@ -5,10 +5,12 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import javax.swing.JFileChooser;
+
 public class Grafo {
 
-	private char grafo[][];
-	private int dimensao=0;
+	private char aGrafo[][];
+	private int nDimens=0;
 	private String aVertices[];
 	private String aVertAux[];
 
@@ -17,48 +19,52 @@ public class Grafo {
 		int nlinh = 0;
 		
 		try {
-			Scanner leitor = new Scanner(
-					new File(
-							ClassLoader.getSystemResource(arquivo).getFile()));
-			
-			Graph<String> graph = new Graph<String>();
-
+			Scanner oRead = new Scanner(
+					new File(arquivo));
+							//ClassLoader.getSystemResource().getFile()));
 				
-			while(leitor.hasNext()){
-				String linha = leitor.nextLine();
-				String linhasempespaco = linha.replace(" ", "");
+			while(oRead.hasNext()){
+				String cLinha = oRead.nextLine();
+				String cLinEspaco = cLinha.replace(" ", "");
 				String aCaminho[] = new String[2];
 
-				if(linhasempespaco.length() == 1){
-					dimensao = Integer.parseInt(linha);
-					grafo = new char[dimensao][dimensao];
-					aVertAux = new String[dimensao];
-					aVertices = new String[dimensao];
+				//Linha que possua somente 1 caracter, obtem a dimenssão da matriz e a instancia
+				if(cLinEspaco.length() == 1){
+					nDimens = Integer.parseInt(cLinha);
+					aGrafo = new char[nDimens][nDimens];
+					aVertAux = new String[nDimens];
+					aVertices = new String[nDimens];
 					nlinh = 0;
 				}
-				if(linhasempespaco.length() > 2){
-					aVertAux = linha.split(" ");
+				
+				//Linha com mais de 2 caracters busca vertices e monta a matriz
+				if(cLinEspaco.length() > 2){
+					aVertAux = cLinha.split(" ");
 					
+					//Busca vertices quando não for * ou .
 					for (int nInd = 0; nInd < aVertAux.length; nInd++) {
 						if(!aVertAux[nInd].equals("*") && !aVertAux[nInd].equals(".")){
 							aVertices[nInd] = aVertAux[nInd];
 						}
 					}
 					
-					int col=0;
-					for(char celula:linha.toCharArray()){
-						if(celula != ' '){
-							grafo[nlinh][col] = celula;
-							col++;
+					int nCol=0;
+					//Monta a matriz tirando os espaços
+					for(char cVal:cLinha.toCharArray()){
+						if(cVal != ' '){
+							aGrafo[nlinh][nCol] = cVal;
+							nCol++;
 						}
 					}
 					nlinh++;
 					
 		
 				}
-				if(linhasempespaco.length() == 2){
+				
+				//Linha com exatamente 2 caracters gera o grafo e respostas
+				if(cLinEspaco.length() == 2){
 					
-					aCaminho = linha.split(" ");
+					aCaminho = cLinha.split(" ");
 					
 					montaGrafo(aCaminho);
 						
@@ -70,35 +76,35 @@ public class Grafo {
 		}
 	}
 	public void montaGrafo(String[] aCaminho){
-		Graph<String> graph = new Graph<String>();
+		Graph<String> oGraph = new Graph<String>();
 		
-		ArrayList<Vertex> listavertices = new ArrayList<Vertex>();
+		ArrayList<Vertex> aListVert = new ArrayList<Vertex>();
 		
-		for(int lin=0;lin<dimensao;lin++){
-			listavertices.add(graph.addVertex(aVertices[lin]));
+		for(int nLin=0;nLin<nDimens;nLin++){
+			aListVert.add(oGraph.addVertex(aVertices[nLin]));
 		}
 		
 		
-		for(int lin=0;lin<dimensao;lin++){
-			for(int col=0;col<dimensao;col++){
-				if(grafo[lin][col] == '.'){
-					listavertices.get(lin).addEdge(listavertices.get(col));
+		for(int nLin=0;nLin<nDimens;nLin++){
+			for(int nCol=0;nCol<nDimens;nCol++){
+				if(aGrafo[nLin][nCol] == '.'){
+					aListVert.get(nLin).addEdge(aListVert.get(nCol));
 				}
 			}
 			
 		}
 		
-		Vertex<String> origem = null, destino = null;
-		for(Vertex<String> v : listavertices){
-			if(v.getValue().equals(aCaminho[0])){
-				origem = v;
+		Vertex<String> oOrig = null, oDestin = null;
+		for(Vertex<String> oVert : aListVert){
+			if(oVert.getValue().equals(aCaminho[0])){
+				oOrig = oVert;
 			}
-			if(v.getValue().equals(aCaminho[1])){
-				destino = v;
+			if(oVert.getValue().equals(aCaminho[1])){
+				oDestin = oVert;
 			}
 		}
 		
-		if(graph.hasPath(origem, destino)){
+		if(oGraph.hasPath(oOrig, oDestin)){
 			System.out.print("*");
 		}else{
 			System.out.print("!");
@@ -106,8 +112,14 @@ public class Grafo {
 	}
 	
 	public static void main(String[] args) {
-		Grafo g = new Grafo();
-		g.carregaGrafo("Project/teste2.txt");
+		Grafo oGraf = new Grafo();
+		JFileChooser fc = new JFileChooser();
+		
+		int returnVal = fc.showOpenDialog(null);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fc.getSelectedFile();
+            oGraf.carregaGrafo(file.getPath().replace("\\", "/"));
+		}
 		
 	}
 }
