@@ -1,15 +1,9 @@
 # LeLe
-Caro usuário, para que sua experiencia ocorra por completo, siga os paços a seguir:
-.....................Carregando.......................
-........................20%...........................
-........................50%...........................
-........................100%..........................
 
-1-	O código deverá ser executado em Java (No eclipse, rode na versão Neon ou superior);
-2-	Clique em executar; 
-3-	o sistema abrirá uma caixa para selecionar o arquivo a ser lido;
-4-	Selecione o documento a ser lido (.TXT) e clique em abrir;
-5-	O sistema irá ler o arquivo selecionado e dará a resposta no próprio console.
+Caro usuário, para que sua experiencia ocorra por completo, siga os passos a seguir:
 
+1. O código deverá ser executado em Java (Eclipse Neon ou superior);
+2. Ao executar o fonte, o sistema abrirá uma caixa para selecionar o arquivo a ser lido;
+3. Com o arquivo selecionado, o sistema fará a leituro e reornara a resposta em console.
 
 Parabéns, você conseguiu!
