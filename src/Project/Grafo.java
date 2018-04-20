@@ -9,65 +9,65 @@ import javax.swing.JFileChooser;
 
 public class Grafo {
 
-	private char aGrafo[][];
+	private String aGrafo[][];
 	private int nDimens=0;
 	private String aVertices[];
 	private String aVertAux[];
+	private ArrayList<Vertex> aListVert;
 
 
 	public void carregaGrafo(String arquivo){
-		int nlinh = 0;
+		int nLinh  = 0;
+		int nLinha = 0;
 		
 		try {
-			Scanner oRead = new Scanner(
-					new File(arquivo));
-							//ClassLoader.getSystemResource().getFile()));
+			Scanner oRead = new Scanner(new File(arquivo));
 				
 			while(oRead.hasNext()){
 				String cLinha = oRead.nextLine();
-				String cLinEspaco = cLinha.replace(" ", "");
-				String aCaminho[] = new String[2];
+				String[] aCaract = cLinha.split(" ");
 
-				//Linha que possua somente 1 caracter, obtem a dimenss„o da matriz e a instancia
-				if(cLinEspaco.length() == 1){
-					nDimens = Integer.parseInt(cLinha);
-					aGrafo = new char[nDimens][nDimens];
-					aVertAux = new String[nDimens];
+				//Linha que possua somente 1 caracter, obtem a dimenss√£o da matriz e a instancia
+				if(aCaract.length == 1){
+					nDimens   = Integer.parseInt(cLinha);
+					aGrafo    = new String[nDimens][nDimens];
+					aVertAux  = new String[nDimens];
 					aVertices = new String[nDimens];
-					nlinh = 0;
+					aListVert = new ArrayList<Vertex>();
+					nLinh = 0;
+					nLinha = -1;
 				}
 				
 				//Linha com mais de 2 caracters busca vertices e monta a matriz
-				if(cLinEspaco.length() > 2){
+				if(aCaract.length == nDimens){
 					aVertAux = cLinha.split(" ");
-					
-					//Busca vertices quando n„o for * ou .
+					nLinha++;
+					//Busca vertices quando n√£o for * ou .
 					for (int nInd = 0; nInd < aVertAux.length; nInd++) {
 						if(!aVertAux[nInd].equals("*") && !aVertAux[nInd].equals(".")){
+							aVertices[nInd] = aVertAux[nInd];
+						}else if(nLinha == nInd){
 							aVertices[nInd] = aVertAux[nInd];
 						}
 					}
 					
 					int nCol=0;
-					//Monta a matriz tirando os espaÁos
-					for(char cVal:cLinha.toCharArray()){
-						if(cVal != ' '){
-							aGrafo[nlinh][nCol] = cVal;
-							nCol++;
-						}
+					//Monta a matriz tirando os espa√ßos
+					for(String cVal:aCaract){
+						aGrafo[nLinh][nCol] = cVal;
+						nCol++;
 					}
-					nlinh++;
+					nLinh++;
+				}
 					
-		
+					
+				//Linha com exatamente 2 caracters gera o grafo e respostas
+				if(aCaract.length == 2){		
+					montaGrafo(aCaract);	
 				}
 				
-				//Linha com exatamente 2 caracters gera o grafo e respostas
-				if(cLinEspaco.length() == 2){
-					
-					aCaminho = cLinha.split(" ");
-					
-					montaGrafo(aCaminho);
-						
+				if(aCaract.length == 1){
+					System.out.println("");
 				}
 			}
 
@@ -77,21 +77,17 @@ public class Grafo {
 	}
 	public void montaGrafo(String[] aCaminho){
 		Graph<String> oGraph = new Graph<String>();
-		
-		ArrayList<Vertex> aListVert = new ArrayList<Vertex>();
-		
+				
 		for(int nLin=0;nLin<nDimens;nLin++){
 			aListVert.add(oGraph.addVertex(aVertices[nLin]));
 		}
 		
-		
 		for(int nLin=0;nLin<nDimens;nLin++){
 			for(int nCol=0;nCol<nDimens;nCol++){
-				if(aGrafo[nLin][nCol] == '.'){
+				if(aGrafo[nLin][nCol] == "."){
 					aListVert.get(nLin).addEdge(aListVert.get(nCol));
 				}
 			}
-			
 		}
 		
 		Vertex<String> oOrig = null, oDestin = null;
@@ -117,9 +113,8 @@ public class Grafo {
 		
 		int returnVal = fc.showOpenDialog(null);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile();
-            oGraf.carregaGrafo(file.getPath().replace("\\", "/"));
+            		File file = fc.getSelectedFile();
+            		oGraf.carregaGrafo(file.getPath().replace("\\", "/"));
 		}
-		
 	}
 }
